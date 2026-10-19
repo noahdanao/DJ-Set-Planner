@@ -4,7 +4,7 @@ from pathlib import Path
 import librosa
 from mutagen.id3 import ID3
 
-MUSIC_DIR = Path.home() / "Downloads" / "serrato files"
+MUSIC_DIR = Path.home() / "Library" / "Mobile Documents" / "com~apple~CloudDocs" / "serrato files"
 
 
 def read_tags(path):
