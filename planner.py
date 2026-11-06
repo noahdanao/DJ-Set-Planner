@@ -28,6 +28,17 @@ def compatible(key1, key2):
 
     return False
 
+def bpm_close(bpm1,bpm2):
+    if abs(bpm1 - bpm2) / bpm1 <= 0.06:
+        return True;
+
+    doubledBpm = bpm1 * 2
+
+    if abs(doubledBpm - bpm2) / doubledBpm <= 0.06:
+        return True
+
+    return False
+
 
 print(compatible("Am", "Em"))   # should print True
 print(compatible("Am", "Fm"))   # should print False
