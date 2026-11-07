@@ -10,7 +10,6 @@ CAMELOT = {
 }
 
 def compatible(key1, key2):
-
     code1 = CAMELOT[key1]
     code2 = CAMELOT[key2]
 
@@ -32,7 +31,6 @@ def compatible(key1, key2):
     return False
 
 def bpm_close(bpm1,bpm2):
-
     if abs(bpm1 - bpm2) / bpm1 <= 0.06:
         return True
 
@@ -58,11 +56,10 @@ def load_Tracks(path = "tracks.csv"):
             })
     return tracks
 
-def build_Set(tracks):
-    
-    current = tracks[0]
+def build_Set(tracks, start):
+    current = start
     playlist = [current]
-    remaining = tracks[1:]
+    remaining = [t for t in tracks if t is not start]
 
     while True:
         next_track = None
@@ -78,11 +75,19 @@ def build_Set(tracks):
         remaining.remove(next_track)
         current = next_track
 
-    return playlist   
+    return playlist
 
+tracks = load_Tracks()
+best = []
 
-playlist = build_Set(load_Tracks())
+for start in tracks:
+    playlist = build_Set(tracks, start)
+    
+    if len(playlist) > len(best):
+        best = playlist
 
-for track in playlist:
-    print(track["bpm"], track["key"], track["title"])
-print(len(playlist), "tracks in the set")
+playlist = build_Set(load_Tracks(),start)
+
+for track in best:
+    print(track["bpm"], CAMELOT[track["key"]], track["title"])
+print(len(best), "tracks in the set")
