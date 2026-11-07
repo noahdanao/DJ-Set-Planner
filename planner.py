@@ -1,3 +1,5 @@
+import csv
+
 CAMELOT = {
     "Abm": "1A", "Ebm": "2A", "Bbm": "3A", "Fm": "4A",
     "Cm": "5A", "Gm": "6A", "Dm": "7A", "Am": "8A",
@@ -8,6 +10,7 @@ CAMELOT = {
 }
 
 def compatible(key1, key2):
+
     code1 = CAMELOT[key1]
     code2 = CAMELOT[key2]
 
@@ -29,17 +32,57 @@ def compatible(key1, key2):
     return False
 
 def bpm_close(bpm1,bpm2):
+
     if abs(bpm1 - bpm2) / bpm1 <= 0.06:
-        return True;
+        return True
 
     doubledBpm = bpm1 * 2
+    doubledBpm2 = bpm2 * 2
 
     if abs(doubledBpm - bpm2) / doubledBpm <= 0.06:
         return True
 
+    if abs(doubledBpm2 - bpm1) / doubledBpm2 <= 0.06:
+        return True
+
     return False
 
+def load_Tracks(path = "tracks.csv"):
+    tracks = []
+    with open(path, newline="") as f:
+        for row in csv.DictReader(f):
+            tracks.append({
+                "title": row["track"],
+                "bpm": float(row["bpm"]),
+                "key": row["key"],
+            })
+    return tracks
 
-print(compatible("Am", "Em"))   # should print True
-print(compatible("Am", "Fm"))   # should print False
-print(compatible("Dbm", "Abm"))
+def build_Set(tracks):
+    
+    current = tracks[0]
+    playlist = [current]
+    remaining = tracks[1:]
+
+    while True:
+        next_track = None
+        for track in remaining:
+            if compatible(current["key"], track["key"]) and bpm_close(current["bpm"], track["bpm"]):
+                next_track = track
+                break
+
+        if next_track is None:
+            break
+
+        playlist.append(next_track)
+        remaining.remove(next_track)
+        current = next_track
+
+    return playlist   
+
+
+playlist = build_Set(load_Tracks())
+
+for track in playlist:
+    print(track["bpm"], track["key"], track["title"])
+print(len(playlist), "tracks in the set")
